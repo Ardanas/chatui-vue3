@@ -1,0 +1,23 @@
+{
+  "name": "@chatui-vue3/components",
+  "version": "1.0.0",
+  "description": "all components are settled here",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "vue-tsc -b && vite build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "vue": ">=3.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.0",
+    "sass": "^1.89.2",
+    "vite": "^7.0.4",
+    "vue-tsc": "^2.2.12"
+  }
+}

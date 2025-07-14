@@ -1,0 +1,20 @@
+{
+  "name": "@chatui-vue3/core",
+  "version": "1.0.0",
+  "main": "dist/index.mjs",
+  "scripts": {
+    "build": "unbuild"
+  },
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "description": "",
+  "peerDependencies": {
+    "vue": ">=3.0.0"
+  },
+  "dependencies": {
+    "@chatui-vue3/components": "workspace:*"
+  }
+}
