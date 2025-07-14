@@ -7,7 +7,7 @@ export interface MessageProps {
   _id: MessageId
   type: string
   content: any
-  position?: 'left' | 'right' | 'center'
+  position?: 'left' | 'right' | 'center' | 'pop'
   hasTime?: boolean
   createdAt?: number
   [key: string]: any
