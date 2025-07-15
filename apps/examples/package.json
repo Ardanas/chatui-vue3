@@ -12,6 +12,7 @@
     "lint:fix": "eslint --fix"
   },
   "dependencies": {
+    "@chatui-vue3/components": "workspace:*",
     "@chatui-vue3/core": "workspace:*",
     "@tailwindcss/vite": "^4.1.11",
     "@vueuse/core": "^13.5.0",

@@ -1,12 +1,12 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
-import { Icon } from '../icon';
+// import { Icon } from '../icon';
 
 export default defineComponent({
   name: 'Button',
-  components: {
-    Icon,
-  },
+  // components: {
+  //   Icon,
+  // },
   props: {
     className: {
       type: String,
@@ -19,17 +19,17 @@ export default defineComponent({
     color: {
       type: String,
       default: '',
-      validator: (value: string) => ['primary', ''].includes(value),
+      // validator: (value: string) => ['primary', ''].includes(value),
     },
     variant: {
       type: String,
       default: '',
-      validator: (value: string) => ['text', 'outline', ''].includes(value),
+      // validator: (value: string) => ['text', 'outline', ''].includes(value),
     },
     size: {
       type: String,
       default: '',
-      validator: (value: string) => ['sm', 'md', 'lg', ''].includes(value),
+      // validator: (value: string) => ['sm', 'md', 'lg', ''].includes(value),
     },
     block: {
       type: Boolean,
@@ -84,9 +84,9 @@ export default defineComponent({
     @click="handleClick"
     v-bind="$attrs"
   >
-    <span v-if="computedIcon" class="Btn-icon">
+    <!-- <span v-if="computedIcon" class="Btn-icon">
       <Icon :type="computedIcon" :spin="loading" />
-    </span>
+    </span> -->
     <slot>{{ label }}</slot>
   </button>
 </template>
@@ -111,7 +111,7 @@ export default defineComponent({
   transition: all 0.2s;
   user-select: none;
   touch-action: manipulation;
-  -webkit-appearance: none;
+  appearance: none;
 
   &:hover,
   &:focus {

@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { QuickReplyItemProps } from '@chatui-vue3/core'
-import { Chat, useCardManager, useMessages, useQuickReplies } from '@chatui-vue3/core'
+import { Chat } from '@chatui-vue3/components'
+import { useMessages, useQuickReplies } from '@chatui-vue3/core'
 import { onMounted, reactive, ref } from 'vue'
-
+import { useCardManager } from '@/composables/useCardManager'
 // 初始化消息列表
 const { messages, appendMsg } = useMessages([])
 const { cardManager } = useCardManager()

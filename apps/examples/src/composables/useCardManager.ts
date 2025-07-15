@@ -1,5 +1,5 @@
 import { Bubble } from '@chatui-vue3/components'
-import { CardManager } from '../utils'
+import { CardManager } from '@chatui-vue3/core'
 
 export function useCardManager() {
   const cardManager = new CardManager()

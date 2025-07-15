@@ -36,12 +36,13 @@ export default defineComponent({
 </script>
 
 <template>
-  <svg
+  <!-- <svg xmlns="http://www.w3.org/2000/svg"
     :class="['Icon', { 'is-spin': spin }, className]"
     v-bind="{...ariaProps, ...$attrs}"
   >
     <use :xlink:href="`#icon-${type}`" />
-  </svg>
+  </svg> -->
+  todo
 </template>
 
 <style lang="scss">

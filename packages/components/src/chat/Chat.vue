@@ -7,6 +7,7 @@ import { Message } from '../message';
 import { QuickReplies } from '../quick-replies';
 import { Composer } from '../composer';
 
+type NavbarProps = typeof Navbar
 export default defineComponent({
   name: 'Chat',
   components: {
@@ -38,8 +39,8 @@ export default defineComponent({
       default: false,
     },
     navbar: {
-      type: Object,
-      default: null,
+      type: Object as () => NavbarProps,
+      default: () => {},
     },
     quickReplies: {
       type: Array as () => QuickReplyItemProps[],
@@ -56,7 +57,7 @@ export default defineComponent({
     colorScheme: {
       type: String,
       default: 'light',
-      validator: (value: string) => ['light', 'dark', 'auto'].includes(value),
+      validator: (value: string) => ['light', 'dark', 'auto'].indexOf(value) !== -1,
     },
     elderMode: {
       type: Boolean,
@@ -172,7 +173,7 @@ export default defineComponent({
     :data-elder-mode="elderMode"
     :data-color-scheme="currentColorScheme"
   >
-    <Navbar v-if="navbar" v-bind="navbar" />
+    <Navbar v-if="navbar" v-bind="navbar" :title="navbar.title || ''" />
     <slot v-else name="navbar" />
 
     <MessageContainer

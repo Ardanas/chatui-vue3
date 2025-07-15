@@ -2,22 +2,40 @@
   "name": "@chatui-vue3/components",
   "version": "1.0.0",
   "description": "all components are settled here",
-  "main": "src/index.ts",
-  "module": "src/index.ts",
+  "main": "build/lib/index.js",
+  "module": "build/es/index.js",
+  "types": "build/es/chat-ui-vue3.es.d.ts",
   "type": "module",
-  "scripts": {
-    "build": "vue-tsc -b && vite build"
+  "exports": {
+    ".": {
+      "types": "./build/es/chat-ui-vue3.es.d.ts",
+      "import": "./build/es/index.js",
+      "require": "./build/lib/index.js"
+    },
+    "./*": "./*"
   },
+  "style": "build/es/components.css",
+  "scripts": {
+    "build": "vue-tsc --noEmit && vite build",
+    "build:types": "vue-tsc --declaration --emitDeclarationOnly --declarationDir dist/types"
+  },
+  "files": [
+    "dist"
+  ],
   "keywords": [],
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "vue": ">=3.0.0"
+    "vue": "^3.2.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.0",
     "sass": "^1.89.2",
     "vite": "^7.0.4",
+    "vite-plugin-dts": "^4.5.4",
     "vue-tsc": "^2.2.12"
+  },
+  "dependencies": {
+    "@chatui-vue3/core": "workspace:*"
   }
 }

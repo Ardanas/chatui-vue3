@@ -1,5 +1,5 @@
 <script lang="ts">
-import { computed, defineComponent, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, defineComponent, nextTick, ref, watch } from 'vue'
 
 export type InputType = 'voice' | 'text'
 
@@ -19,8 +19,9 @@ export default defineComponent({
       default: '请输入...',
     },
     inputType: {
-      type: String as () => InputType,
+      type: String,
       default: 'text',
+      validator: (value: InputType) => (['text', 'voice'] as InputType[]).indexOf(value) !== -1,
     },
   },
   emits: ['send', 'focus', 'blur', 'change', 'inputTypeChange'],
@@ -184,7 +185,7 @@ export default defineComponent({
     line-height: 20px;
     font-size: 15px;
     overflow-y: auto;
-    -webkit-appearance: none;
+    appearance: none;
     transition: all 0.3s ease;
 
     &:focus {

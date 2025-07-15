@@ -20,6 +20,7 @@ export default defineConfig({
         'src/utils',
       ],
       eslintrc: { enabled: true },
+      ignore: ['h'],
     }),
     Components({
       dirs: [
