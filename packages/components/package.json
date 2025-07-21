@@ -36,6 +36,8 @@
     "vue-tsc": "^2.2.12"
   },
   "dependencies": {
-    "@chatui-vue3/core": "workspace:*"
+    "@chatui-vue3/core": "workspace:*",
+    "@types/marked": "^6.0.0",
+    "marked": "^16.1.1"
   }
 }

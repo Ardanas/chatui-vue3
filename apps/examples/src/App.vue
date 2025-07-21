@@ -1,26 +1,45 @@
 <script setup lang="ts">
-import type { QuickReplyItemProps } from '@chatui-vue3/core'
-import { Chat } from '@chatui-vue3/components'
+import type { MessageId, QuickReplyItemProps } from '@chatui-vue3/core'
+import { Chat, MarkdownText, Think } from '@chatui-vue3/components'
 import { useMessages, useQuickReplies } from '@chatui-vue3/core'
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import ModelSelector from '@/components/ModelSelector.vue'
 import { useCardManager } from '@/composables/useCardManager'
+import { useSiliconFlow } from '@/composables/useSiliconFlow'
+import { siliconFlowService } from '@/services/siliconflowService'
+import 'github-markdown-css/github-markdown.css'
+
 // 初始化消息列表
-const { messages, appendMsg } = useMessages([])
+const { messages, appendMsg, updateMsg } = useMessages([])
 const { cardManager } = useCardManager()
+
+cardManager.register('think', Think)
+cardManager.register('markdown', MarkdownText)
+// 初始化硅基流动AI服务
+const { setModel } = useSiliconFlow()
+
+// 当前选择的模型
+const currentModel = ref('Qwen/QwQ-32B')
+
+// 处理模型变更
+function handleModelChange(modelId: string) {
+  currentModel.value = modelId
+  setModel(modelId)
+}
 
 const isTyping = ref(false)
 const quickRepliesVisible = ref(true)
 
 // 导航栏配置
-const navbar = reactive({
-  title: 'ChatUI Vue3 演示',
+const navbar = {
+  title: '硅基流动AI对话',
   leftContent: {
     icon: 'chevron-left',
     onClick: () => {
       window.history.back()
     },
   },
-})
+}
 
 // 处理发送消息
 function handleSend(type: string, text: string) {
@@ -34,38 +53,53 @@ function handleSend(type: string, text: string) {
 
     // 显示机器人正在输入状态
     isTyping.value = true
+    quickRepliesVisible.value = false
 
-    // 模拟机器人回复
-    setTimeout(() => {
-      let replyText = ''
-
-      if (text.includes('你好') || text.includes('嗨') || text.includes('hi')) {
-        replyText = '你好！很高兴为你服务。有什么我可以帮助你的吗？'
-      }
-      else if (text.includes('介绍') || text.includes('自己')) {
-        replyText = '我是 ChatUI Vue3 智能助理，基于阿里巴巴 ChatUI 的 Vue3 实现。我可以帮助你了解 ChatUI Vue3 的使用方法和特性。'
-      }
-      else if (text.includes('做什么') || text.includes('功能')) {
-        replyText = 'ChatUI Vue3 提供了一系列用于构建对话式交互界面的组件，包括：\n\n• 对话容器\n• 消息气泡\n• 输入框\n• 快捷回复\n• 头像\n• 时间戳\n\n你可以使用这些组件快速构建聊天机器人、客服系统等应用。'
-      }
-      else if (text.includes('代码') || text.includes('示例')) {
-        replyText = '以下是一个简单的示例代码：\n\n```vue\n<template>\n  <Chat\n    :messages="messages.value"\n    :isTyping="isTyping"\n    :navbar="navbar"\n    @send="handleSend"\n  >\n    <template #messageContent="{ message }">\n      <Bubble :content="message.content.text" />\n    </template>\n  </Chat>\n</template>\n```\n\n你可以在我们的文档中找到更多示例。'
-      }
-      else {
-        replyText = `你发送了: "${text}"，但我不太理解你的意思。你可以尝试问我关于 ChatUI Vue3 的问题，或者使用下方的快捷回复。`
-      }
-
-      appendMsg({
-        type: 'text',
-        content: { text: replyText },
+    // 创建一个空的AI回复消息
+    const baseTextMsg = {
+      type: 'markdown',
+      content: { text: '', class: 'markdown-body' },
+    }
+    const baseThinkMsg = {
+      type: 'think',
+      content: { text: '' },
+    }
+    let textMsgId: MessageId | null = null
+    let thinkMsgId: MessageId | null = null
+    siliconFlowService
+      .sendMessageStream(text, ({ content, reasoningContent }) => {
+        if (content) {
+          if (!textMsgId) {
+            textMsgId = appendMsg(baseTextMsg)
+          }
+          baseTextMsg.content.text += content
+          updateMsg(textMsgId!, baseTextMsg)
+        }
+        else if (reasoningContent) {
+          if (!thinkMsgId) {
+            thinkMsgId = appendMsg(baseThinkMsg)
+          }
+          baseThinkMsg.content.text += reasoningContent
+          updateMsg(thinkMsgId!, baseThinkMsg)
+        }
       })
-      isTyping.value = false
+      .catch((err) => {
+        // 处理错误情况
+        console.error('AI回复出错:', err)
+        appendMsg({
+          type: 'text',
+          content: { text: `抱歉，AI回复出现错误: ${err instanceof Error ? err.message : '未知错误'}` },
+        })
+      })
+      .finally(() => {
+        // 处理完成后的操作
+        isTyping.value = false
 
-      // 重新显示快捷回复
-      setTimeout(() => {
-        quickRepliesVisible.value = true
-      }, 1000)
-    }, 1000)
+        // 重新显示快捷回复
+        setTimeout(() => {
+          quickRepliesVisible.value = true
+        }, 1000)
+      })
   }
 }
 
@@ -74,7 +108,8 @@ const { quickReplies } = useQuickReplies([
   { name: '你好' },
   { name: '介绍一下自己' },
   { name: '你能做什么?' },
-  { name: '帮我写代码', isNew: true },
+  { name: '帮我写一段Vue3代码', isNew: true },
+  { name: '解释一下硅基流动API', isNew: true },
 ])
 
 function handleQuickReplyClick(item: QuickReplyItemProps) {
@@ -87,7 +122,7 @@ onMounted(() => {
   setTimeout(() => {
     appendMsg({
       type: 'text',
-      content: { text: '👋 你好，我是 ChatUI Vue3 智能助理，有什么可以帮助你的吗？' },
+      content: { text: '👋 你好，我是基于硅基流动API的智能助理，有什么可以帮助你的吗？' },
       createdAt: Date.now(),
       user: {
         avatar: 'https://gw.alicdn.com/imgextra/i2/O1CN01fPEB9P1ylYWgaDuVR_!!6000000006619-0-tps-132-132.jpg',
@@ -97,7 +132,7 @@ onMounted(() => {
     setTimeout(() => {
       appendMsg({
         type: 'text',
-        content: { text: '你可以点击下方的快捷回复，或者直接输入消息与我交流。' },
+        content: { text: '你可以点击下方的快捷回复，或者直接输入消息与我交流。我使用的是硅基流动平台的AI能力。' },
         createdAt: Date.now(),
       })
     }, 1000)
@@ -108,6 +143,7 @@ onMounted(() => {
 <template>
   <div>
     <Chat
+      class="chatui"
       :messages="messages"
       :is-typing="isTyping"
       :navbar="navbar"
@@ -119,91 +155,23 @@ onMounted(() => {
       <template #messageContent="{ message }">
         <component :is="cardManager.use(message.type)" v-bind="message.content" />
       </template>
+
+      <template #navbarActions>
+        <ModelSelector v-model:model-id="currentModel" @change="handleModelChange" />
+      </template>
     </Chat>
   </div>
 </template>
 
-<style scoped>
-.demo-page {
-  background-color: var(--gray-7);
-  min-height: 100vh;
-  padding-bottom: 40px;
-}
-
-.page-header {
-  background-color: var(--white);
-  border-bottom: 1px solid var(--gray-6);
-  padding: 30px 0;
-  margin-bottom: 30px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.page-title {
-  font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: var(--gray-1);
-}
-
-.page-description {
-  font-size: 16px;
-  color: var(--gray-3);
-}
-
-.chat-container {
-  max-width: 600px;
-  height: 500px;
-  margin: 0 auto;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid var(--gray-6);
-}
-
-.demo-instructions {
-  max-width: 600px;
-  margin: 30px auto 0;
-  background-color: var(--white);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.demo-instructions h2 {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 15px;
-  color: var(--gray-1);
-}
-
-.demo-instructions ul {
-  padding-left: 20px;
-  margin: 0;
-}
-
-.demo-instructions li {
-  margin-bottom: 8px;
-  color: var(--gray-2);
-}
-
-.keyword {
-  display: inline-block;
-  padding: 2px 8px;
-  background-color: var(--brand-4);
-  color: var(--brand-1);
-  border-radius: 4px;
-  margin: 0 2px;
-  font-size: 14px;
-}
-
-@media (max-width: 768px) {
-  .chat-container {
-    height: 70vh;
-    margin: 0 15px;
-  }
-
-  .demo-instructions {
-    margin: 30px 15px 0;
+<style lang="scss" scoped>
+.chatui {
+  :deep() {
+    .MessageContainer {
+      background: #fff;
+    }
+    .ChatFooter {
+      background: #fff;
+    }
   }
 }
 </style>
@@ -275,9 +243,9 @@ onMounted(() => {
 }
 
 // 暗色模式
-html[data-color-scheme="dark"] {
-  --brand-3: #343B4D;
-  --brand-4: #332B26;
+html[data-color-scheme='dark'] {
+  --brand-3: #343b4d;
+  --brand-4: #332b26;
 
   --gray-1: #f3f6f8;
   --gray-2: #cacfd7;

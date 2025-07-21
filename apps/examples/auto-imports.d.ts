@@ -67,6 +67,7 @@ declare global {
   const useQuickReplies: typeof import('./src/composables/useQuickReplies')['useQuickReplies']
   const useRoute: typeof import('vue-router')['useRoute']
   const useRouter: typeof import('vue-router')['useRouter']
+  const useSiliconFlow: typeof import('./src/composables/useSiliconFlow')['useSiliconFlow']
   const useSlots: typeof import('vue')['useSlots']
   const useTemplateRef: typeof import('vue')['useTemplateRef']
   const useTitleTyping: typeof import('./src/composables/useTitleTyping')['useTitleTyping']

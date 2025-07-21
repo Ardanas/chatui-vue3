@@ -20,6 +20,7 @@ declare module 'vue' {
     Input: typeof import('./src/components/ui/input/Input.vue')['default']
     Message: typeof import('./src/components/business/message/Message.vue')['default']
     MessageContainer: typeof import('./src/components/business/message-container/MessageContainer.vue')['default']
+    ModelSelector: typeof import('./src/components/ModelSelector.vue')['default']
     Navbar: typeof import('./src/components/business/navbar/Navbar.vue')['default']
     NavBar: typeof import('./src/components/business/navbar/NavBar.vue')['default']
     QuickReplies: typeof import('./src/components/business/quick-replies/QuickReplies.vue')['default']

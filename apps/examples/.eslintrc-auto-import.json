@@ -71,6 +71,7 @@
     "useModel": true,
     "useRoute": true,
     "useRouter": true,
+    "useSiliconFlow": true,
     "useSlots": true,
     "useTemplateRef": true,
     "watch": true,
